@@ -1,3 +1,11 @@
+# History files
+.Rhistory
+.Rapp.history
+
+# Session Data files
+.RData
+
+# Pipeline output and intermediate files
 output/
 intermediate/
 _build/
