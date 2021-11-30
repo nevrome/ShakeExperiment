@@ -48,8 +48,8 @@ output x = "output" </> x
 
 main :: IO ()
 main = shakeArgs shakeOptions {shakeFiles = "_build"} $ do
-  want [output "3D.html"]
+  want [output "3D.png"]
   scripts "A.R" %$ [input "raw_input.csv"] --> [intermediate "dens_surface.RData"]
   scripts "B.R" %$ [ ] --> [intermediate "colours.RData"]
-  scripts "C.R" %$ map intermediate ["dens_surface.RData", "colours.RData"] --> [output "3D.html"]
+  scripts "C.R" %$ map intermediate ["dens_surface.RData", "colours.RData"] --> [output "3D.png"]
 

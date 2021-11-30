@@ -3,5 +3,5 @@ From: rocker/r-base:4.1.0
 
 %post
   # install the necessary R packages
-  R --slave -e 'install.packages(c("MASS", "plotly"))'
+  R --slave -e 'install.packages("MASS")'
 
