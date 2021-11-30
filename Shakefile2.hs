@@ -29,6 +29,8 @@ relevantRunCommand (Settings singularityContainer bindPath qsubCommand) x
     | takeExtension x == ".R"   = cmd_ "Rscript" x --cmd_ qsubCommand "singularity" "exec" bindPath singularityContainer "Rscript" x
     | takeExtension x == ".sh"  = cmd_ qsubCommand "singularity" "exec" bindPath singularityContainer x
 
+
+infixl 8 `process`
 process :: FilePath -> ([FilePath], [FilePath]) -> Rules ()
 process script (inFiles, outFiles) =
       let settings = mpiEVAClusterSettings
@@ -36,8 +38,9 @@ process script (inFiles, outFiles) =
         need $ [script] ++ inFiles --, singularityContainer settings] ++ inFiles
         relevantRunCommand settings script
 
-(--->) :: a -> b -> (a,b)
-(--->) x y = (x,y)
+infixl 9 -->
+(-->) :: a -> b -> (a,b)
+(-->) x y = (x,y)
 
 input x = "input" </> x
 intermediate x = "intermediate" </> x
@@ -50,20 +53,11 @@ main = shakeArgs shakeOptions {shakeFiles = "_build"} $ do
     want [ output "3D.html" ]
     
     scripts "C.R" `process`
-      ( map intermediate [
-          "dens_surface.RData"
-        , "colours.RData"
-        ] ,
-        [ output "3D.html" ]
-      )
+      map intermediate [ "dens_surface.RData", "colours.RData" ] --> [ output "3D.html" ]
 
     scripts "A.R" `process`
-      ( [ input "raw_input.csv" ] ,
-        [ intermediate "dens_surface.RData" ]
-      )
+      [ input "raw_input.csv" ] --> [ intermediate "dens_surface.RData" ]
 
     scripts "B.R" `process`
-      ( [ ] ,
-        [ intermediate "colours.RData" ]
-      )
+      [ ] --> [ intermediate "colours.RData" ]
 
