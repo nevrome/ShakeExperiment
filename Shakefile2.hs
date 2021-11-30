@@ -19,22 +19,22 @@ data Settings = Settings {
 }
 
 mpiEVAClusterSettings = Settings {
-  singularityContainer = "singularity_example.sif"
-, bindPath = "--bind=/mnt/archgen/users/schmid"
+  singularityContainer = "singularity_experiment.sif"
+, bindPath = "" -- "--bind=/mnt/archgen/users/schmid"
 , qsubCommand =  "qsub -sync y -b y -cwd -q archgen.q -pe smp 1 -l h_vmem=1G -now n -V -j y -o ~/log -N example"
 }
 
 relevantRunCommand :: Settings -> FilePath -> Action ()
 relevantRunCommand (Settings singularityContainer bindPath qsubCommand) x
-  | takeExtension x == ".R"   = cmd_ "Rscript" x --cmd_ qsubCommand "singularity" "exec" bindPath singularityContainer "Rscript" x
-  | takeExtension x == ".sh"  = cmd_ qsubCommand "singularity" "exec" bindPath singularityContainer x
+  | takeExtension x == ".R"  = cmd_ "singularity" "exec" singularityContainer bindPath "Rscript" x -- cmd_ qsubCommand "singularity" "exec" bindPath singularityContainer "Rscript" x
+  -- | takeExtension x == ".sh" = cmd_ qsubCommand "singularity" "exec" bindPath singularityContainer x
 
 infixl 8 %$
 (%$) :: FilePath -> ([FilePath], [FilePath]) -> Rules ()
 (%$) script (inFiles, outFiles) =
   let settings = mpiEVAClusterSettings
   in outFiles &%> \out -> do
-    need $ [script] ++ inFiles --, singularityContainer settings] ++ inFiles
+    need $ [script, singularityContainer settings] ++ inFiles
     relevantRunCommand settings script
 
 infixl 9 -->
@@ -50,6 +50,6 @@ main :: IO ()
 main = shakeArgs shakeOptions {shakeFiles = "_build"} $ do
   want [output "3D.html"]
   scripts "A.R" %$ [input "raw_input.csv"] --> [intermediate "dens_surface.RData"]
-  scripts "B.R" %$ [] --> [intermediate "colours.RData"]
+  scripts "B.R" %$ [ ] --> [intermediate "colours.RData"]
   scripts "C.R" %$ map intermediate ["dens_surface.RData", "colours.RData"] --> [output "3D.html"]
 

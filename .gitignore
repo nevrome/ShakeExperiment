@@ -9,3 +9,6 @@
 output/
 intermediate/
 _build/
+
+# singularity container
+*.sif

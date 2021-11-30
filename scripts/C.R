@@ -1,10 +1,8 @@
-library(magrittr)
-
 load("intermediate/dens_surface.RData")
 load("intermediate/colours.RData")
 
 s <- dens_surface
-p <- plotly::plot_ly(x = s$x, y = s$y, z = s$z) %>% 
+p <- plotly::plot_ly(x = s$x, y = s$y, z = s$z) |>
   plotly::add_surface(
     colorscale = list(
       list(0,   colours[1]),
