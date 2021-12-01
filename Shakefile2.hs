@@ -22,7 +22,7 @@ data Settings = Settings {
 mpiEVAClusterSettings = Settings {
   singularityContainer = "singularity_experiment.sif"
 , bindPath = "--bind=/mnt/archgen/users/schmid"
-, qsubCommand =  "qsub -sync y -b y -cwd -q archgen.q -pe smp 1 -l h_vmem=1G -now n -V -j y -o ~/log -N example"
+, qsubCommand = "qsub -sync y -b y -cwd -q archgen.q -pe smp 1 -l h_vmem=10G -now n -V -j y -o ~/log -N example"
 }
 
 relevantRunCommand :: Settings -> FilePath -> Action ()
