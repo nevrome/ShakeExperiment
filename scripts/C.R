@@ -9,10 +9,12 @@ z_facet_center <- (z[-1, -1] + z[-1, -ncol(z)] + z[-nrow(z), -1] + z[-nrow(z), -
 z_facet_range <- cut(z_facet_center, 100)
 
 png(file = "output/3D.png", bg = "transparent", width = 1000, heigh = 600)
+  par(mar = c(0, 0, 0, 0))
   persp(
     s, 
     phi = 30, theta = 20, d = 5, expand = 0.3,
-    col = colors[z_facet_range], border="white", 
-    box = F
+    col = colors[z_facet_range], border = "white",
+    box = F, zlim = c(0, 0.009)
   )
 dev.off()
+#par(mar = c(5.1, 4.1, 4.1, 2.1))
