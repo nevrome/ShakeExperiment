@@ -9,9 +9,9 @@ import Development.Shake.Util
 main :: IO ()
 main = shakeArgs shakeOptions {shakeFiles = "_build"} $ do
 
-  want [ "output" </> "3D.html" ]
+  want [ "output" </> "3D.png" ]
   
-  "output" </> "3D.html" %> \out -> do
+  "output" </> "3D.png" %> \out -> do
     let script = "scripts" </> "C.R"
         dataFiles = [
           "intermediate" </> "dens_surface.RData", 
