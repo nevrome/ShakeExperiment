@@ -48,7 +48,15 @@ scripts x = "scripts" </> x
 output x = "output" </> x
 
 main :: IO ()
-main = shakeArgs shakeOptions {shakeFiles = "_build"} $ do
+main = shakeArgs shakeOptions {
+    --https://hackage.haskell.org/package/shake-0.19.6/docs/Development-Shake.html#g:5
+      shakeFiles = "_build"
+    , shakeProgress = progressSimple
+    , shakeColor = True
+    , shakeVerbosity = Verbose
+    , shakeThreads = 3
+    , shakeTimings = True
+    } $ do
   want [output "3D.png"]
   scripts "A.R" %$ [input "raw_input.csv"] --> [intermediate "dens_surface.RData"]
   scripts "B.R" %$ [ ] --> [intermediate "colours.RData"]
