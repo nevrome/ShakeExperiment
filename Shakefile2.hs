@@ -14,20 +14,21 @@ data Settings = Settings {
 -- Path to mount into the singularity container
 -- https://sylabs.io/guides/3.0/user-guide/bind_paths_and_mounts.html
 , bindPath :: String
--- How to run normal commands
+-- Command to define the HPC environment where,
+-- so how the script should be submitted to the cluster
 , qsubCommand :: String
 }
 
 mpiEVAClusterSettings = Settings {
   singularityContainer = "singularity_experiment.sif"
-, bindPath = "" -- "--bind=/mnt/archgen/users/schmid"
+, bindPath = "--bind=/mnt/archgen/users/schmid"
 , qsubCommand =  "qsub -sync y -b y -cwd -q archgen.q -pe smp 1 -l h_vmem=1G -now n -V -j y -o ~/log -N example"
 }
 
 relevantRunCommand :: Settings -> FilePath -> Action ()
 relevantRunCommand (Settings singularityContainer bindPath qsubCommand) x
-  | takeExtension x == ".R"  = cmd_ "singularity" "exec" singularityContainer bindPath "Rscript" x -- cmd_ qsubCommand "singularity" "exec" bindPath singularityContainer "Rscript" x
-  -- | takeExtension x == ".sh" = cmd_ qsubCommand "singularity" "exec" bindPath singularityContainer x
+  | takeExtension x == ".R"  = cmd_ qsubCommand "singularity" "exec" bindPath singularityContainer "Rscript" x
+  | takeExtension x == ".sh" = cmd_ qsubCommand "singularity" "exec" bindPath singularityContainer x
 
 infixl 8 %$
 (%$) :: FilePath -> ([FilePath], [FilePath]) -> Rules ()
