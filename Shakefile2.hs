@@ -4,7 +4,6 @@
 import Development.Shake
 import Development.Shake.Command
 import Development.Shake.FilePath
-import Development.Shake.Util
 
 data Settings = Settings {
 -- Path to the singularity image file
@@ -21,8 +20,8 @@ data Settings = Settings {
 
 mpiEVAClusterSettings = Settings {
   singularityContainer = "singularity_experiment.sif"
-, bindPath = "--bind=/mnt/archgen/users/schmid"
-, qsubCommand = "qsub -sync y -b y -cwd -q archgen.q -pe smp 1 -l h_vmem=10G -now n -V -j y -o ~/log -N example"
+, bindPath             = "--bind=/mnt/archgen/users/schmid"
+, qsubCommand          = "qsub -sync y -b y -cwd -q archgen.q -pe smp 1 -l h_vmem=10G -now n -V -j y -o ~/log -N example"
 }
 
 relevantRunCommand :: Settings -> FilePath -> Action ()
@@ -48,14 +47,14 @@ scripts x = "scripts" </> x
 output x = "output" </> x
 
 main :: IO ()
-main = shakeArgs shakeOptions {
+main = shake shakeOptions {
     --https://hackage.haskell.org/package/shake-0.19.6/docs/Development-Shake.html#g:5
-      shakeFiles = "_build"
-    , shakeProgress = progressSimple
-    , shakeColor = True
+      shakeFiles     = "_build"
+    , shakeProgress  = progressSimple
+    , shakeColor     = True
     , shakeVerbosity = Verbose
-    , shakeThreads = 3
-    , shakeTimings = True
+    , shakeThreads   = 3
+    , shakeTimings   = True
     } $ do
   want [output "3D.png"]
   scripts "A.R" %$ [input "raw_input.csv"] --> [intermediate "dens_surface.RData"]
