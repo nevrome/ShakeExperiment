@@ -21,13 +21,17 @@ data Settings = Settings {
 mpiEVAClusterSettings = Settings {
   singularityContainer = "singularity_experiment.sif"
 , bindPath             = "--bind=/mnt/archgen/users/schmid"
-, qsubCommand          = "qsub -sync y -b y -cwd -q archgen.q -pe smp 1 -l h_vmem=10G -now n -V -j y -o ~/log -N example"
+, qsubCommand          = "qsub -sync y -b y -cwd -q archgen.q \
+                          \-pe smp 1 -l h_vmem=10G -now n -V -j y \
+                          \-o ~/log -N example"
 }
 
 relevantRunCommand :: Settings -> FilePath -> Action ()
 relevantRunCommand (Settings singularityContainer bindPath qsubCommand) x
-  | takeExtension x == ".R"  = cmd_ qsubCommand "singularity" "exec" bindPath singularityContainer "Rscript" x
-  | takeExtension x == ".sh" = cmd_ qsubCommand "singularity" "exec" bindPath singularityContainer x
+  | takeExtension x == ".R"  = cmd_ qsubCommand 
+      "singularity" "exec" bindPath singularityContainer "Rscript" x
+  | takeExtension x == ".sh" = cmd_ qsubCommand 
+      "singularity" "exec" bindPath singularityContainer x
 
 infixl 8 %$
 (%$) :: FilePath -> ([FilePath], [FilePath]) -> Rules ()
@@ -57,7 +61,11 @@ main = shake shakeOptions {
     , shakeTimings   = True
     } $ do
   want [output "3D.png"]
-  scripts "A.R" %$ [input "raw_input.csv"] --> [intermediate "dens_surface.RData"]
-  scripts "B.R" %$ [ ] --> [intermediate "colours.RData"]
-  scripts "C.R" %$ map intermediate ["dens_surface.RData", "colours.RData"] --> [output "3D.png"]
+  scripts "A.R" %$ 
+    [input "raw_input.csv"] --> [intermediate "dens_surface.RData"]
+  scripts "B.R" %$ 
+    [ ] --> [intermediate "colours.RData"]
+  scripts "C.R" %$ 
+    map intermediate ["dens_surface.RData", "colours.RData"] --> 
+    [output "3D.png"]
 
