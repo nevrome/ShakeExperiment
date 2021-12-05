@@ -6,15 +6,8 @@ import Development.Shake.Command
 import Development.Shake.FilePath
 
 data Settings = Settings {
--- Path to the singularity image file
--- required; create with "singularity_build_sif.sh"
--- that's not part of the pipeline, because it requires sudo permissions
   singularityContainer :: FilePath
--- Path to mount into the singularity container
--- https://sylabs.io/guides/3.0/user-guide/bind_paths_and_mounts.html
 , bindPath :: String
--- Command to define the HPC environment where,
--- so how the script should be submitted to the cluster
 , qsubCommand :: String
 }
 
@@ -52,12 +45,11 @@ output x = "output" </> x
 
 main :: IO ()
 main = shake shakeOptions {
-    --https://hackage.haskell.org/package/shake-0.19.6/docs/Development-Shake.html#g:5
       shakeFiles     = "_build"
+    , shakeThreads   = 3
     , shakeProgress  = progressSimple
     , shakeColor     = True
     , shakeVerbosity = Verbose
-    , shakeThreads   = 3
     , shakeTimings   = True
     } $ do
   want [output "3D.png"]
