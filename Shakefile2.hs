@@ -47,6 +47,7 @@ main :: IO ()
 main = shake shakeOptions {
       shakeFiles     = "_build"
     , shakeThreads   = 3
+    , shakeChange    = ChangeModtime
     , shakeProgress  = progressSimple
     , shakeColor     = True
     , shakeVerbosity = Verbose
@@ -60,4 +61,3 @@ main = shake shakeOptions {
   scripts "C.R" %$ 
     map intermediate ["dens_surface.RData", "colours.RData"] --> 
     [output "3D.png"]
-
